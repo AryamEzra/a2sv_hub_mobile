@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final int notificationCount;
   final String profileImageUrl;
-  final VoidCallback? onMenuPressed;
+  final VoidCallback? onMenuPressed; // Callback for the menu icon
   final VoidCallback? onSearchPressed;
   final VoidCallback? onSparklePressed;
   final VoidCallback? onNotificationPressed;
@@ -15,7 +15,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     required this.notificationCount,
     required this.profileImageUrl,
-    this.onMenuPressed,
+    this.onMenuPressed, // Use this for opening the drawer
     this.onSearchPressed,
     this.onSparklePressed,
     this.onNotificationPressed,
@@ -23,41 +23,42 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    // This is the AppBar code copied from TracksPage
     return AppBar(
-      backgroundColor: Colors.white, // Background color for the AppBar
-      elevation: 1.0, // Subtle shadow below the AppBar
+      backgroundColor: Colors.white,
+      elevation: 1.0,
+      // Use the leading property for the menu button
       leading: IconButton(
-        icon: const Icon(Icons.menu, color: Colors.black54), // Menu Icon
-        // Use the passed callback, or do nothing if null
-        onPressed: onMenuPressed ?? () { print("Menu button pressed (default)"); },
+        icon: const Icon(Icons.menu, color: Colors.black54),
+        // Use the passed callback OR the default Scaffold.of(context).openDrawer()
+        onPressed: onMenuPressed,
+        tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
       ),
+      // Title can be used for centered content if needed, otherwise leave null
+      // title: Text("Page Title"), // Example if you needed a title
       actions: <Widget>[
         IconButton(
           icon: const Icon(Icons.search, color: Colors.black54),
-           // Use the passed callback
-          onPressed: onSearchPressed ?? () { print("Search button pressed (default)"); },
+          onPressed: onSearchPressed ?? () { print("Search pressed (default)"); },
+          tooltip: "Search", // Accessibility
         ),
-        // You might want to remove this fixed SizedBox or make it configurable
-        // if different screens need different spacing
-        const SizedBox(width: 133), // <-- Consider removing/adjusting this later
-
         IconButton(
           icon: const Icon(Icons.auto_awesome, color: Colors.orangeAccent),
-           // Use the passed callback
-          onPressed: onSparklePressed ?? () { print("Sparkle button pressed (default)"); },
+          onPressed: onSparklePressed ?? () { print("Sparkle pressed (default)"); },
+          tooltip: "Sparkle", // Accessibility
         ),
-        const SizedBox(width: 8), // Spacing before notifications
+        // Removed the large fixed SizedBox(width: 133) - let elements flow naturally
+        const SizedBox(width: 8), // Consistent spacing
 
+        // Notification Icon with Badge
         Stack(
           alignment: Alignment.topRight,
           children: <Widget>[
             IconButton(
               icon: const Icon(Icons.notifications, color: Colors.black54),
-               // Use the passed callback
-              onPressed: onNotificationPressed ?? () { print("Notification button pressed (default)"); },
+              onPressed: onNotificationPressed ?? () { print("Notification pressed (default)"); },
+              tooltip: "Notifications", // Accessibility
             ),
-            if (notificationCount > 0) // Use the passed notificationCount
+            if (notificationCount > 0)
               Positioned(
                 right: 8,
                 top: 8,
@@ -70,7 +71,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
                   child: Text(
-                    '$notificationCount', // Use the passed notificationCount
+                    '$notificationCount',
                     style: const TextStyle(
                       color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold,
                     ),
@@ -82,6 +83,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         const SizedBox(width: 8), // Spacing before profile
 
+        // Profile Picture Area
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: Stack(
@@ -89,8 +91,16 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
             children: <Widget>[
               CircleAvatar(
                 radius: 18,
-                backgroundImage: NetworkImage(profileImageUrl), // Use the passed profileImageUrl
-                backgroundColor: Colors.grey[200],
+                backgroundImage: NetworkImage(profileImageUrl),
+                backgroundColor: Colors.grey[200], // Fallback color
+                // Optional: Handle image loading errors
+                onBackgroundImageError: (exception, stackTrace) {
+                  print("Error loading profile image: $exception");
+                  // You could show a placeholder icon here if the image fails
+                },
+                child: profileImageUrl.isEmpty // Show placeholder if URL is empty
+                  ? const Icon(Icons.person, color: Colors.grey)
+                  : null,
               ),
               Positioned(
                 right: 0,
@@ -98,7 +108,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
                 child: Container(
                   width: 12, height: 12,
                   decoration: BoxDecoration(
-                    color: Colors.green,
+                    color: Colors.green, // Online indicator
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.white, width: 2),
                   ),
@@ -106,13 +116,12 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ],
           ),
-        ),
-      ],
+    ),],
+      // DO NOT PUT THE DRAWER HERE
     );
   }
 
-  // Implementing PreferredSizeWidget requires this getter
-  // kToolbarHeight is the default AppBar height
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  
 }

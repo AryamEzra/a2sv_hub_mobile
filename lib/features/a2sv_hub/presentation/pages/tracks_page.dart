@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:myapp/features/a2sv_hub/presentation/widgets/common_app_bar.dart';
 import 'package:myapp/features/a2sv_hub/presentation/widgets/progress_card.dart';
 import 'package:myapp/features/a2sv_hub/presentation/widgets/stats_card.dart';
+import 'package:myapp/features/a2sv_hub/presentation/widgets/app_drawer.dart';
 // Import the new AppBar widget // Adjust path if needed
 
 class TracksPage extends StatefulWidget {
@@ -18,9 +19,7 @@ class _TracksPageState extends State<TracksPage> {
 
   // Define callback functions for AppBar actions (optional)
   void _handleMenuPress() {
-    // Example: Open a drawer if you have one
-    // Scaffold.of(context).openDrawer();
-    print("Menu button pressed (handled in TracksPage)");
+    Scaffold.of(context).openDrawer();
      // Add actual logic here
   }
 
@@ -53,7 +52,8 @@ class _TracksPageState extends State<TracksPage> {
         onNotificationPressed: _handleNotificationPress,
         // Pass other callbacks if defined
       ),
-      backgroundColor: Colors.grey[100],
+      drawer: const AppDrawer(),
+      backgroundColor: Colors.white,
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
         children: <Widget>[

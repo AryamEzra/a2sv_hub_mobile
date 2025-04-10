@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/features/a2sv_hub/presentation/pages/home_page.dart';
 import 'package:myapp/features/a2sv_hub/presentation/pages/tracks_page.dart';
 
 void main() {
@@ -17,7 +18,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue, // You can customize the theme
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: TracksPage(), // Set TracksPage as the home screen
+      initialRoute: '/home', // Set the initial route
+      routes: {
+        '/home': (context) => const HomePage(),
+        '/tracks': (context) => const TracksPage(),
+      },
     );
   }
 }
